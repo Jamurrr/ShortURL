@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond $1 !^(index.php)
+RewriteRule ^A(.*)$ redirect.php?key=$1 [L]
