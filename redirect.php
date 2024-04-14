@@ -1,15 +1,29 @@
 <?php
 
-$conn = mysqli_connect("localhost", 'root', '', 'short_url') or die("Ошибка подключения");
-$url = htmlspecialchars($_GET['key']);
-@$newSelect = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `urls` WHERE `short` = '".$url."'"));
-if ($newSelect) {
-    $result = [
-        "url"=> $newSelect["url"],
-        'short' => $newSelect['short']
-    ];
-    header('location: '.$result['url']);
+$servername = "localhost";
+$username = "root"; 
+$dbname = "url_shortener";
+
+$conn = new mysqli($servername, $username, '', $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
-echo "hello";
+
+$shortCode = $_GET['code'];
+
+$sql = "SELECT long_url FROM urls WHERE short_code = '$shortCode'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $longUrl = $row['long_url'];
+    header("Location: $longUrl");
+    exit;
+} 
+else {
+    echo "URL not found";
+}
+
+$conn->close();
 
 ?>
